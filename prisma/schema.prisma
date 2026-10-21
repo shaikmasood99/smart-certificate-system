@@ -1,37 +1,40 @@
+// This is your Prisma schema file
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("STAFF")
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  password String
+  role String @default("ADMIN")
   createdAt DateTime @default(now())
 }
 
 model Student {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  rollNo    String   @unique
-  course    String
+  id String @id @default(cuid())
+  name String
+  rollNo String @unique
+  course String
+  email String?
+  certificates Certificate[]
   createdAt DateTime @default(now())
 }
 
 model Certificate {
-  id             String   @id @default(cuid())
-  certificateId  String   @unique
-  studentId      String
-  studentName    String
-  courseName     String
-  issueDate      DateTime @default(now())
-  qrCode         String?
-  createdAt      DateTime @default(now())
+  id String @id @default(cuid())
+  certificateId String @unique
+  studentId String
+  student Student @relation(fields: [studentId], references: [id])
+  course String
+  issueDate DateTime @default(now())
+  qrCode String
+  createdAt DateTime @default(now())
 }
